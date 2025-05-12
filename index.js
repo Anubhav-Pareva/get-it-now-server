@@ -1,8 +1,9 @@
 import express from 'express';
 import userRouter from './routes/user-signup-routes/signup-route.js';
 import bodyParser from 'body-parser';
+import connectDB from './db.js';
 const app = express();
-
+connectDB();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/user", userRouter);
