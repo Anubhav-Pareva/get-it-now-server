@@ -16,7 +16,7 @@ export const sendLoginMail = async (to) => {
       from: process.env.EMAIL_USER, // Sender address
       to: to, // Receiver address
       subject: "Login Alert", // Subject line
-      text: "Heloo, User you just Login into Todo App",
+      text: "Heloo, User you just Login into Get It Now App",
     };
     const info = await transporter.sendMail(mailOptions);
     return info;

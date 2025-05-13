@@ -1,7 +1,7 @@
 import { generateOTP, verifyOTP } from "../helper.js";
 import OtpModel from "../mongoose-model/otpmodel.js";
 import UserModel from "../mongoose-model/userModel.js";
-import { sendOtpMail } from "../nodeMailer-config/mail-transporter.js";
+import { sendLoginMail, sendOtpMail } from "../nodeMailer-config/mail-transporter.js";
 export const signupModel = async () => {};
 
 export const sendOtpModel = async (userEmail) => {
@@ -43,7 +43,15 @@ export const verifyOtpModel = async (userEmail, inputOTP) => {
       const result = verifyOTP(inputOTP, otpResult.otp);
       if (result) {
         if (isUserExist) {
-          return {success:true, isUserExist: true, userDetail: isUserExist};
+            const loginMailResult = await sendLoginMail(userEmail);
+            if(loginMailResult){
+                return {
+                  success: true,
+                  isUserExist: true,
+                  userDetail: isUserExist,
+                };
+            }
+            return {success:true, isUserExist: true, userDetail: isUserExist, message:"login mail not send"};
         }
         return {success:true, isUserExist: false, userDetail: null};
       }
