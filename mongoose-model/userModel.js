@@ -1,5 +1,9 @@
 import { model, Schema } from "mongoose";
 const UserSchema = new Schema({
+    name:{
+        type:String,
+        required:true,        
+    },
     email:{
         type:String,
         required:true,
@@ -16,7 +20,7 @@ const UserSchema = new Schema({
     },
     referralCode:{
         type:String,
-        default:null,
+        requireg:true,
     },
     referBy:{
         type:String,
@@ -32,7 +36,7 @@ const UserSchema = new Schema({
     },
     DOB:{
         type:Date,
-        required:true,
+        default:null
     }
 },{
     collection:"user-data"

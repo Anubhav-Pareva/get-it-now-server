@@ -1,13 +1,11 @@
 import { 
+    registerUserModel,
         sendOtpModel, 
         verifyOtpModel 
         } from "../models/signup.model.js";
-import OtpModel from "../mongoose-model/otpmodel.js";
 
 export const signupController = async(req, res)=>{
     const {userEmail} = req.body;
-    console.log(userEmail);
-    await OtpModel.deleteMany({ email: userEmail });
     res.json({ message: "User created successfully", userEmail });
 }
 
@@ -31,5 +29,43 @@ export const verifyOtpController = async(req, res)=>{
                                       userDetail: result.userDetail
                                     });
     }
-    res.status(401).json({ message: "Invalid OTP", success:false, userEmail });
+    res.status(200).json({ message: "Invalid OTP", success:false, userEmail });
+}
+export const registerUserController = async(req, res)=>{
+    const {
+            referalCode, 
+            dob, 
+            userName, 
+            password, 
+            userEmail
+        } = req.body;
+         if(userEmail === "" || password === "" || userName === "" || dob === ""){
+              return res.status().json({success:false, message:"required fields are empty"});
+            }
+    const result = await registerUserModel(
+                                            userName, 
+                                            password, 
+                                            userEmail, 
+                                            dob, 
+                                            referalCode
+                                        );
+    if(result?.success){
+        return res
+                .status(200)
+                .json({
+                        success:true, 
+                        message:"user created successfully", 
+                        userData:result.user
+                    });
+    }
+    else if (result.message === "duplicate user email") {
+      return res
+        .status(200)
+        .json({ success: false, message: "duplicate user email" });
+    }
+        return res
+          .status(200)
+          .json({ 
+                    success: false, 
+                    message: "User not created DB problem" });
 }
