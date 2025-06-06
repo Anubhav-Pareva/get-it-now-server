@@ -1,42 +1,36 @@
 import ProductModel from "../mongoose-model/productModel.js";
 export const getProductsModel = async (category="", limit=10, skip=0) =>{
-    const filter = category ? { category } : {};
+  try{
+  const isValidCategory = category.trim().replace(/^'+|'+$/g, "");
+  const filter = isValidCategory
+    ? { category: { $regex: `^${isValidCategory}$`, $options: "i" } }
+    : {};
     const result = await ProductModel.find(filter,{
       _id:1,
       title: 1,
       price: 1,
       thumbnail: 1,
     }).limit(limit).skip(skip);
-    return result;
+    const totalDoc = await ProductModel.countDocuments(filter);
+    return { products:result, totalDoc, success:true };
+  }catch(error){
+    return { success:false, error:error };
+  }
 }
 export const getProductModel = async (id) =>{
     try{
     const result = await ProductModel.findById({_id:id});
     if(result){
-        return result
+        return { success:true, product:result }
     }
-    return null
+    return { success:true, product:null }
     }
-    catch(error){
-        console.log(error);
+    catch(error){ 
+        return { success:false, error:error }
     }
 }
 
 
-export const getCategoryProductModel = async (category) => {
-  try {
-    const result = await ProductModel.find({ category },{
-        _id:1,
-        title: 1,
-        price: 1,
-        thumbnail: 1,
-      }).limit(10); 
-    return result; 
-  } catch (error) {
-    console.error("Error fetching products by category:", error);
-    throw error; 
-  }
-};
 export const getSearchProductModel = async (searchQuery) => {
     try {
         const result = await ProductModel.find(
