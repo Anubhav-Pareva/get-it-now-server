@@ -5,11 +5,17 @@ export const getProductsController = async (req, res) =>{
     const skip = (page - 1) * limit;
     const result = await getProductsModel(category, limit, skip);
     if(result.success === true){
+        let remainingCount = result.totalDoc - (skip === 0 ? limit : (limit * page));
+        if(remainingCount <= 0){
+            remainingCount = 0
+        }
+
         return res.status(200)
                   .json({
                         success:true, 
-                        products:result.products, 
-                        totalCount:result.totalDoc
+                        products:result?.products, 
+                        totalCount:result?.totalDoc,
+                        remainingCount:remainingCount ,
                     });
     }
     res.status(200).json({success:false, error:result.error});

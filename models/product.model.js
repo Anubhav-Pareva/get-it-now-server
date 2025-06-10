@@ -12,7 +12,7 @@ export const getProductsModel = async (category="", limit=10, skip=0) =>{
       thumbnail: 1,
     }).limit(limit).skip(skip);
     const totalDoc = await ProductModel.countDocuments(filter);
-    return { products:result, totalDoc, success:true };
+    return { products:result, totalDoc, success:true, };
   }catch(error){
     return { success:false, error:error };
   }
